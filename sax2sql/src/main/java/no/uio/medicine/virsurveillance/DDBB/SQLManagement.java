@@ -30,7 +30,7 @@ public class SQLManagement {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
 
-    private static final String USER = "user1";
+    private static final String USER = "user1"; 
     private static final String PASS = "myPass";
     
     private static final String SCRIPT_PATH = "/Users/apla/Documents/Virus Suirvellance/SQL stuff/createDatabase.sql";
