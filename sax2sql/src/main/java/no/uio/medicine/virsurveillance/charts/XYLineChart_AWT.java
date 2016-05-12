@@ -7,6 +7,7 @@ package no.uio.medicine.virsurveillance.charts;
 
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,8 +46,6 @@ public class XYLineChart_AWT extends ApplicationFrame {
     ArrayList<String> titles;
 
     private boolean printable = false;
-    
-    
 
     public XYLineChart_AWT(String applicationTitle, String chartTitle,
             String xTitle, String yTitle, ArrayList<ArrayList<Float>> dataPoints,
@@ -84,9 +83,11 @@ public class XYLineChart_AWT extends ApplicationFrame {
 
         //renderer.setSeriesStroke(0, new BasicStroke(4.0f));
         //renderer.setSeriesStroke(1, new BasicStroke(3.0f));
-        //renderer.setSeriesStroke(2, new BasicStroke(2.0f));
+        //renderer.setSeriesStroke(2, new BasicStroke(2.0f));JOU
         this.plot.setRenderer(this.renderer);
-        setContentPane(this.chartPanel);
+        this.setContentPane(this.chartPanel);
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
+
     }
 
     private XYDataset createDataset(ArrayList<ArrayList<Float>> dataPoints, ArrayList<ArrayList<Float>> xAxis, ArrayList<String> titles) {
@@ -162,9 +163,9 @@ public class XYLineChart_AWT extends ApplicationFrame {
     public void setColorOffset(int colorOffset) {
         this.colorOffset = colorOffset;
     }
-    
+
     private Color getColor(int index) {
-        int index2=index+this.colorOffset;
+        int index2 = index + this.colorOffset;
         switch (index2) {
             case 0:
                 return Color.RED;
@@ -230,6 +231,7 @@ public class XYLineChart_AWT extends ApplicationFrame {
         this.pack();
         this.setVisible(true);
         this.printable = true;
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
     }
 
@@ -265,7 +267,7 @@ public class XYLineChart_AWT extends ApplicationFrame {
         this.pack();
         this.setVisible(true);
         this.printable = true;
-
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
     public int addSerie(ArrayList<Float> dataPointList, ArrayList<Float> axis, String title) {
@@ -323,6 +325,14 @@ public class XYLineChart_AWT extends ApplicationFrame {
         };
         ChartUtilities.saveChartAsPNG(outputFile, this.chartPanel.getChart(), 800, 500);
         System.out.println("Saved at " + outputFile.toString() + " size = " + 800 + "x" + 500);
+    }
+
+    @Override
+    public void windowClosing(final WindowEvent evt) {
+        if (evt.getWindow() == this) {
+            dispose();
+
+        }
     }
 
 }

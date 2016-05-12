@@ -151,7 +151,7 @@ public class QueryResult {
         this.boxplotChart = boxplotChart;
     }
     
-    @SuppressWarnings("empty-statement")
+    
     public void updateCharts(){
          if (xyLineChart!=null){
              xyLineChart.updateChartData();             
@@ -165,5 +165,17 @@ public class QueryResult {
          
     }
     
+    public void closeCharts(){
+        if (xyLineChart!=null){
+             xyLineChart.setVisible(false);
+         }
+         if (stackedChart!=null){
+             stackedChart.setVisible(false);         
+         }
+         if (boxplotChart!=null){
+            boxplotChart.setVisible(false);            
+         }
+         
+    }
 
 }

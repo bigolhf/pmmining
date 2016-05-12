@@ -11,6 +11,7 @@ package no.uio.medicine.virsurveillance.charts;
  */
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,6 +112,7 @@ public class BoxAndWhiskerChart_AWT extends ApplicationFrame {
         this.chartPanel.setPreferredSize(new java.awt.Dimension(800, 500));
         setContentPane(this.chartPanel);
 
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
     public BoxAndWhiskerChart_AWT(String applicationTitle, String chartTitle,
@@ -155,6 +157,7 @@ public class BoxAndWhiskerChart_AWT extends ApplicationFrame {
         this.chartPanel.setBackground(Color.white);
         this.chartPanel.setPreferredSize(new java.awt.Dimension(1200, 500));
         setContentPane(chartPanel);
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
     }
 
@@ -196,8 +199,6 @@ public class BoxAndWhiskerChart_AWT extends ApplicationFrame {
      *
      * @param args ignored.
      */
-
-
     public void save2File(File outputFile) throws IOException {
         ChartUtilities cu = new ChartUtilities() {
         };
@@ -236,7 +237,7 @@ public class BoxAndWhiskerChart_AWT extends ApplicationFrame {
 
     }
 
-        public static void main(final String[] args) {
+    public static void main(final String[] args) {
 
         //Log.getInstance().addTarget(new PrintStreamLogTarget(System.out));
         ArrayList<ArrayList<ArrayList<Float>>> dataPoints = new ArrayList<>();
@@ -270,5 +271,13 @@ public class BoxAndWhiskerChart_AWT extends ApplicationFrame {
         demo2.updateChartData();
 
     }
-    
+
+    @Override
+    public void windowClosing(final WindowEvent evt) {
+        if (evt.getWindow() == this) {
+            dispose();
+
+        }
+    }
+
 }

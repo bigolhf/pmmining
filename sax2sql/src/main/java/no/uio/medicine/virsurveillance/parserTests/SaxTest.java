@@ -48,7 +48,7 @@ public class SaxTest {
 
         try {
             //createAndLoadData();
-            performJournalEvolutionQueries();
+            performImpactFactorQueries();
         } catch (Exception ex) {
             Logger.getLogger(SaxTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -133,66 +133,104 @@ public class SaxTest {
     }
 
     private static void performImpactFactorQueries() throws SQLException, ClassNotFoundException, IOException {
+        String output = "/Users/apla/Documents/Virus Suirvellance/outputs/journalIfacs";
+        try {
+            new File(output).mkdir();
+        } catch (Exception e) {
+
+        }
+
         SQLQueries sqlQuery = new SQLQueries();
         sqlQuery.connect2DB();
-        
+
         QueryResult result0 = sqlQuery.getJournalImpactFactors();
         result0.getBoxplotChart().updateChartData();
+        result0.save2File(output + "/generalIfac");
+        System.out.println("General Informationi obtained");
 
-        QueryResult result1 = sqlQuery.getJournalWithVariableImpactFactors(5);
-        result1.getBoxplotChart().updateChartData();
-        
-        QueryResult result2 = sqlQuery.getJournalWithVariableImpactFactors(10);
-        result2.getBoxplotChart().updateChartData();
-        
-        QueryResult result3 = sqlQuery.getJournalWithVariableImpactFactors(20);
-        result3.getBoxplotChart().updateChartData();
-        String output="/Users/apla/Documents/Virus Suirvellance/outputs/journalIfacs";
-        new File(output).mkdir();
-        result0.save2File(output+"/generalIfac");
-        result1.save2File(output+"/IfacVar5");
-        result2.save2File(output+"/IfacVar10");
-        result3.save2File(output+"/IfacVar20");
-        
-        System.out.println("PerfomImpactFactorQueries Finished");
+        for (int i = -1; i < 2; i++) {
+            String auxStr = "variableIfac";
+            if (i == -1) {
+                auxStr = "DecreasingIfac";
+            } else if (i == 1) {
+                auxStr = "IncreasingIFac";
+            }
+            
+            QueryResult result1 = sqlQuery.getJournalWithVariableImpactFactors(5, i);
+            result1.getBoxplotChart().updateChartData();
+            ArrayList<String> journals1 = new ArrayList<>();            
+            for (String journalName : result1.getValues().get("abbreviated_title")) {
+                if (!journalName.equalsIgnoreCase("null") && !journals1.contains(journalName)) {
+                    journals1.add(journalName);
+                   
+                }
+            }
+            QueryResult resultaux1 = sqlQuery.getJournalEvolution(journals1,auxStr+" evolution of journals with IF var of 5");
+            resultaux1.getXyLineChart().updateChartData();
 
-        
+            QueryResult result2 = sqlQuery.getJournalWithVariableImpactFactors(10, i);
+            result2.getBoxplotChart().updateChartData();
+            ArrayList<String> journals2 = new ArrayList<>();            
+            for (String journalName : result2.getValues().get("abbreviated_title")) {
+                if (!journalName.equalsIgnoreCase("null") && !journals2.contains(journalName)) {
+                    journals2.add(journalName);                    
+                }
+            }
+            QueryResult resultaux2 = sqlQuery.getJournalEvolution(journals2,auxStr+" evolution of journals with IF var of 10");
+            resultaux2.getXyLineChart().updateChartData();
+
+            QueryResult result3 = sqlQuery.getJournalWithVariableImpactFactors(20, i);
+            result3.getBoxplotChart().updateChartData();
+            ArrayList<String> journals3 = new ArrayList<>();            
+            for (String journalName : result3.getValues().get("abbreviated_title")) {
+                if (!journalName.equalsIgnoreCase("null") && !journals3.contains(journalName)) {
+                    journals3.add(journalName);                    
+                }
+            }
+            QueryResult resultaux3 = sqlQuery.getJournalEvolution(journals3,auxStr+" evolution of journals with IF var of 20");
+            resultaux3.getXyLineChart().updateChartData();
+            
+            result1.save2File(output + "/" + auxStr + "IfacVar5");
+            result2.save2File(output + "/" + auxStr + "IfacVar10");
+            result3.save2File(output + "/" + auxStr + "IfacVar20");
+            
+            resultaux1.save2File(output + "/" + auxStr + "Evolution_IfacVar5");
+            resultaux2.save2File(output + "/" + auxStr + "Evolution_IfacVar10");
+            resultaux3.save2File(output + "/" + auxStr + "Evolution_IfacVar20");
+
+            System.out.println(auxStr + " PerfomImpactFactorQueries Finished");
+        }
+
     }
-    
+
     private static void performJournalEvolutionQueries() throws SQLException, ClassNotFoundException, IOException {
         SQLQueries sqlQuery = new SQLQueries();
         sqlQuery.connect2DB();
-        
-        ArrayList<String> journals = new ArrayList<>(); 
-        
-        QueryResult resultAux = sqlQuery.getJournalWithVariableImpactFactors(15,-1);
-        int max=100;
-        int count=0;
-        for (String journalName: resultAux.getValues().get("abbreviated_title")){
-            if (!journalName.equalsIgnoreCase("null") && !journals.contains(journalName) && count < max){
+
+        ArrayList<String> journals = new ArrayList<>();
+
+        QueryResult resultAux = sqlQuery.getJournalWithVariableImpactFactors(15, -1);
+        int max = 100;
+        int count = 0;
+        for (String journalName : resultAux.getValues().get("abbreviated_title")) {
+            if (!journalName.equalsIgnoreCase("null") && !journals.contains(journalName) && count < max) {
                 journals.add(journalName);
-                count++;  
+                count++;
             }
-                      
+
         }
-        
-        
+
         //journals.add("lancet");
-           
-        
         QueryResult result0 = sqlQuery.getJournalEvolution(journals);
         result0.getXyLineChart().updateChartData();
-        
-        //result0.save2File(output+"/generalIfac");
-        
-        //System.out.println("PerfomImpactFactorQueries Finished");
 
-        
+        //result0.save2File(output+"/generalIfac");
+        //System.out.println("PerfomImpactFactorQueries Finished");
     }
-    
+
     private static void performVirusQueries() throws SQLException, ClassNotFoundException, IOException {
         SQLQueries sqlQuery = new SQLQueries();
-        
+
         String inputVirusFile = "/Users/apla/Documents/Virus Suirvellance/Data/Table_human_viruses.csv";
         ArrayList<String> viruses = getDataFromVirusCSV(inputVirusFile);
 
@@ -234,7 +272,7 @@ public class SaxTest {
             }
             result3.save2File("/Users/apla/Documents/Virus Suirvellance/outputs/pubsPerYearRel4copy/" + topic);
         }
-         
+
     }
 
     private static ArrayList<String> getDataFromVirusCSV(String inputVirusFile) throws FileNotFoundException, IOException {
@@ -252,7 +290,5 @@ public class SaxTest {
         return viruses;
 
     }
-    
-    
 
 }

@@ -7,6 +7,7 @@ package no.uio.medicine.virsurveillance.charts;
 
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class StackedChart_AWT extends ApplicationFrame {
         //renderer.setSeriesStroke(1, new BasicStroke(3.0f));
         //renderer.setSeriesStroke(2, new BasicStroke(2.0f));
         setContentPane(this.chartPanel);
+        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
     
     public StackedChart_AWT(String applicationTitle, String chartTitle,
@@ -331,7 +333,13 @@ public class StackedChart_AWT extends ApplicationFrame {
         System.out.println("Saved at " + outputFile.toString() + " size = " + 800 + "x" + 500);
     }
 
-    
+    @Override
+    public void windowClosing(final WindowEvent evt) {
+        if (evt.getWindow() == this) {
+            dispose();
+
+        }
+    }
 
     
 }

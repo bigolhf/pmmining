@@ -771,6 +771,10 @@ public class SQLQueries {
     }
 
     public QueryResult getJournalEvolution(Collection<String> journalNames) throws SQLException {
+        return this.getJournalEvolution(journalNames,"");
+    }
+    
+    public QueryResult getJournalEvolution(Collection<String> journalNames, String title) throws SQLException {
 
         QueryResult qResult = new QueryResult();
 
@@ -785,7 +789,15 @@ public class SQLQueries {
             ArrayList<Float> currentImpacts = new ArrayList<>();
             ArrayList<Float> currentYears = new ArrayList<>();
 
-            String query = "select impactFactor.ifac, impactfactor.date from test.impactfactor, test.pubmedjournal where pubmedjournal.idpubmedjournal=impactfactor.pubmedjournal_idpubmedjournal and (pubmedjournal.title='" + journalN + "' or pubmedjournal.abbreviated_title='" + journalN + "');";
+            String journalNaux=journalN;
+            while (journalNaux.startsWith(" ")){
+                journalNaux=journalNaux.substring(1);
+            }
+            while (journalNaux.endsWith(" ")){
+                journalNaux=journalNaux.substring(0, journalNaux.length()-1);                
+            }
+            
+            String query = "select impactFactor.ifac, impactfactor.date from test.impactfactor, test.pubmedjournal where pubmedjournal.idpubmedjournal=impactfactor.pubmedjournal_idpubmedjournal and (pubmedjournal.title='" + journalNaux + "' or pubmedjournal.abbreviated_title='" + journalN + "');";
             Statement stmt = sqlConnection.createStatement();
             System.out.println(query);
             ResultSet sqlQueryResult = stmt.executeQuery(query);
@@ -814,7 +826,7 @@ public class SQLQueries {
 
         }
 
-        XYLineChart_AWT chart = new XYLineChart_AWT("Journals evolution", "Journals evolution",
+        XYLineChart_AWT chart = new XYLineChart_AWT(title, title,
                 "Year", "Impact Factor", impacts,
                 years, journals);
 
