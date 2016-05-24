@@ -64,12 +64,12 @@ public class SQLQueries {
     public ArrayList<PubmedArticle> selectArticlesAboutATopic(String topic) throws SQLException {
         ArrayList<PubmedArticle> articleList = new ArrayList<>();
         Statement stmt = sqlConnection.createStatement();
-        String query = "select idpubmed_article,pubmed_article.title as title,abstract,year(publication) as pubYear,month(publication) as pubMonth, pubmedjournal.title from test.pubmed_article,test.pubmedjournal where (pubmed_article.title like '%" + topic + "%' or abstract like '%" + topic + "%') and pubmed_article.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal;";
+        String query = "select idpubmedarticle,pubmedarticle.title as title,abstract,year(publication) as pubYear,month(publication) as pubMonth, pubmedjournal.title from test.pubmedarticle,test.pubmedjournal where (pubmedarticle.title like '%" + topic + "%' or abstract like '%" + topic + "%') and pubmedarticle.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal;";
         System.out.println(query);
         ResultSet queryResult = stmt.executeQuery(query);
         while (queryResult.next()) {
             PubmedArticle art = new PubmedArticle();
-            art.setId(queryResult.getString("idpubmed_article"));
+            art.setId(queryResult.getString("idpubmedarticle"));
             art.setTitle(queryResult.getString("title"));
             art.setPublicationYear(queryResult.getInt("pubYear"));
             art.addAbstract(queryResult.getString("abstract"));
@@ -85,7 +85,7 @@ public class SQLQueries {
         QueryResult qResult = new QueryResult();
 
         Statement stmt = sqlConnection.createStatement();
-        String query = "select  year(pubmed_article.publication) as year, count(*) as articles from test.pubmed_article where title like '%" + topic + "%' or abstract like '%" + topic + "%' group by year(test.pubmed_article.publication) order by year asc;";
+        String query = "select  year(pubmedarticle.publication) as year, count(*) as articles from test.pubmedarticle where title like '%" + topic + "%' or abstract like '%" + topic + "%' group by year(test.pubmedarticle.publication) order by year asc;";
         System.out.println(query);
         ResultSet queryResult = stmt.executeQuery(query);
 
@@ -133,12 +133,12 @@ public class SQLQueries {
         String query = "select\n"
                 + "		count(*),\n"
                 + "        avg(ifac),max(ifac),min(ifac),std(ifac),\n"
-                + "        year(pubmed_article.publication) as pubYear\n"
-                + "	from test.pubmedjournal,test.pubmed_article,test.impactfactor\n"
-                + "    where (pubmed_article.title like '%" + topic + "%' or pubmed_article.abstract like '%" + topic + "%') \n"
-                + "		and pubmed_article.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal \n"
+                + "        year(pubmedarticle.publication) as pubYear\n"
+                + "	from test.pubmedjournal,test.pubmedarticle,test.impactfactor\n"
+                + "    where (pubmedarticle.title like '%" + topic + "%' or pubmedarticle.abstract like '%" + topic + "%') \n"
+                + "		and pubmedarticle.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal \n"
                 + "        and impactfactor.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal\n"
-                + "        and impactfactor.date = year(pubmed_article.publication)\n"
+                + "        and impactfactor.date = year(pubmedarticle.publication)\n"
                 + "        and impactfactor.ifac >" + minIfac + "\n"
                 + "	group by pubYear"
                 + "     order by pubYear asc;";
@@ -247,12 +247,12 @@ public class SQLQueries {
         String query = "select\n"
                 + "		count(*),\n"
                 + "        avg(ifac),max(ifac),min(ifac),std(ifac),\n"
-                + "        year(pubmed_article.publication) as pubYear\n"
-                + "	from test.pubmedjournal,test.pubmed_article,test.impactfactor\n"
-                + "    where (pubmed_article.title like '%" + topic + "%' or pubmed_article.abstract like '%" + topic + "%') \n"
-                + "		and pubmed_article.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal \n"
+                + "        year(pubmedarticle.publication) as pubYear\n"
+                + "	from test.pubmedjournal,test.pubmedarticle,test.impactfactor\n"
+                + "    where (pubmedarticle.title like '%" + topic + "%' or pubmedarticle.abstract like '%" + topic + "%') \n"
+                + "		and pubmedarticle.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal \n"
                 + "        and impactfactor.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal\n"
-                + "        and impactfactor.date = year(pubmed_article.publication)\n"
+                + "        and impactfactor.date = year(pubmedarticle.publication)\n"
                 + "        and impactfactor.ifac >" + minIfac + "\n"
                 + "	group by pubYear"
                 + "     order by pubYear asc;";
@@ -327,16 +327,16 @@ public class SQLQueries {
                 + "        SUM(CASE WHEN impactfactor.ifac < " + lowerTH + " THEN 1 ELSE 0 END) as 'low', \n"
                 + "        SUM(CASE WHEN (impactfactor.ifac >= " + lowerTH + " and impactfactor.ifac <" + upperTH + ") THEN 1 ELSE 0 END) as 'medium', \n"
                 + "        SUM(CASE WHEN impactfactor.ifac >= " + upperTH + " THEN 1 ELSE 0 END) as 'high', \n"
-                + "        year(pubmed_article.publication) as pubYear\n"
+                + "        year(pubmedarticle.publication) as pubYear\n"
                 + "       \n"
-                + "	from test.pubmedjournal,test.pubmed_article,test.impactfactor\n"
+                + "	from test.pubmedjournal,test.pubmedarticle,test.impactfactor\n"
                 + "    where \n"
-                + "		(pubmed_article.title like '%" + topic + "%' or pubmed_article.abstract like '%" + topic + "%') 		and \n"
-                + "        pubmed_article.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal         and \n"
+                + "		(pubmedarticle.title like '%" + topic + "%' or pubmedarticle.abstract like '%" + topic + "%') 		and \n"
+                + "        pubmedarticle.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal         and \n"
                 + "        impactfactor.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal\n"
-                + "        and impactfactor.date = year(pubmed_article.publication)       \n"
+                + "        and impactfactor.date = year(pubmedarticle.publication)       \n"
                 + "        and impactfactor.ifac > 0\n"
-                + "	group by year(pubmed_article.publication)"
+                + "	group by year(pubmedarticle.publication)"
                 + "     order by pubYear asc;";
         System.out.println(query);
         ResultSet sqlQueryResult = stmt.executeQuery(query);
@@ -433,17 +433,17 @@ public class SQLQueries {
                 + "        SUM(CASE WHEN impactfactor.ifac < " + lowerTH + " THEN 1 ELSE 0 END)/count(*) as 'low', \n"
                 + "        SUM(CASE WHEN (impactfactor.ifac >= " + lowerTH + " and impactfactor.ifac <" + upperTH + ") THEN 1 ELSE 0 END)/count(*) as 'medium', \n"
                 + "        SUM(CASE WHEN impactfactor.ifac >= " + upperTH + " THEN 1 ELSE 0 END)/count(*) as 'high', \n"
-                + "        year(pubmed_article.publication) as pubYear\n"
+                + "        year(pubmedarticle.publication) as pubYear\n"
                 + "       \n"
-                + "	from test.pubmedjournal,test.pubmed_article,test.impactfactor\n"
+                + "	from test.pubmedjournal,test.pubmedarticle,test.impactfactor\n"
                 + "    where \n"
-                + "		(pubmed_article.title like '%" + topic + "%' or pubmed_article.abstract like '%" + topic + "%') 		and \n"
-                + "        pubmed_article.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal         and \n"
+                + "		(pubmedarticle.title like '%" + topic + "%' or pubmedarticle.abstract like '%" + topic + "%') 		and \n"
+                + "        pubmedarticle.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal         and \n"
                 + "        impactfactor.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal\n"
-                + "        and impactfactor.date = year(pubmed_article.publication)       \n"
+                + "        and impactfactor.date = year(pubmedarticle.publication)       \n"
                 + "        and impactfactor.ifac > 0\n"
-                + "	group by year(pubmed_article.publication)"
-                + "     order by year(pubmed_article.publication) asc;";
+                + "	group by year(pubmedarticle.publication)"
+                + "     order by year(pubmedarticle.publication) asc;";
         System.out.println(query);
         ResultSet sqlQueryResult = stmt.executeQuery(query);
         boolean first = true;
@@ -535,21 +535,21 @@ public class SQLQueries {
 
         Statement stmt = sqlConnection.createStatement();
         String query = "select\n"
-                + "        year(pubmed_article.publication) as pubYear,\n"
-                + "        (select count(*) from test.pubmed_article where year(pubmed_article.publication)=pubYear) as totalPubsThisYear,\n"
+                + "        year(pubmedarticle.publication) as pubYear,\n"
+                + "        (select count(*) from test.pubmedarticle where year(pubmedarticle.publication)=pubYear) as totalPubsThisYear,\n"
                 + "	   count(*) as totalPubsAboutTopic, \n"
                 + "        SUM(CASE WHEN impactfactor.ifac < " + lowerTH + " THEN 1 ELSE 0 END) as 'low', \n"
                 + "        SUM(CASE WHEN (impactfactor.ifac >= " + lowerTH + " and impactfactor.ifac <" + upperTH + ") THEN 1 ELSE 0 END) as 'medium', \n"
                 + "        SUM(CASE WHEN impactfactor.ifac >= " + upperTH + " THEN 1 ELSE 0 END) as 'high' \n"
                 + "       \n"
-                + "	from test.pubmedjournal,test.pubmed_article,test.impactfactor\n"
+                + "	from test.pubmedjournal,test.pubmedarticle,test.impactfactor\n"
                 + "    where \n"
-                + "		(pubmed_article.title like '%" + topic + "%' or pubmed_article.abstract like '%" + topic + "%') 		and \n"
-                + "        pubmed_article.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal         and \n"
+                + "		(pubmedarticle.title like '%" + topic + "%' or pubmedarticle.abstract like '%" + topic + "%') 		and \n"
+                + "        pubmedarticle.pubmedjournal_idpubmedjournal = pubmedjournal.idpubmedjournal         and \n"
                 + "        impactfactor.pubmedjournal_idpubmedjournal=pubmedjournal.idpubmedjournal\n"
-                + "        and impactfactor.date = year(pubmed_article.publication)       \n"
+                + "        and impactfactor.date = year(pubmedarticle.publication)       \n"
                 + "        and impactfactor.ifac > 0\n"
-                + "	group by year(pubmed_article.publication)"
+                + "	group by year(pubmedarticle.publication)"
                 + "     order by pubYear asc;";
         System.out.println(query);
         ResultSet sqlQueryResult = stmt.executeQuery(query);
